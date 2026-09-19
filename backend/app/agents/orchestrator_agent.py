@@ -151,8 +151,58 @@ class EchoOrchestratorAgent(BaseAgent):
             shared_context["source_urls"] = investigation.source_urls
         if investigation.property_id:
             shared_context["property_id"] = investigation.property_id
+            from backend.app.services.repository import echo_repository
+            existing_prop = echo_repository.get_property(investigation.property_id)
+            if existing_prop:
+                prop_dict = {
+                    "property_id": existing_prop.property_id,
+                    "canonical_name": existing_prop.canonical_name,
+                    "entity_type": existing_prop.entity_type,
+                    "company": existing_prop.company,
+                    "sector": existing_prop.sector,
+                    "region": existing_prop.region,
+                    "identity": {
+                        "canonical_name": existing_prop.canonical_name,
+                        "company": existing_prop.company,
+                        "sector": existing_prop.sector,
+                        "property_type": existing_prop.property_type,
+                        "developer": existing_prop.developer,
+                    },
+                    "location": {
+                        "region": existing_prop.region,
+                        "city": existing_prop.city,
+                        "locality": existing_prop.locality,
+                    },
+                    "financials": {
+                        "price": existing_prop.price or 1000000.0,
+                        "price_per_sqft": existing_prop.price_per_sqft or 1000.0,
+                    },
+                    "specs": {
+                        "area": existing_prop.area or 1000.0,
+                        "bedrooms": existing_prop.bedrooms or 2.0,
+                    },
+                    "confidence": existing_prop.confidence or 0.8,
+                    "attributes": existing_prop.attributes,
+                }
+                shared_context["property"] = prop_dict
+                shared_context["canonical_properties"] = [prop_dict]
+                if not shared_context.get("source_urls"):
+                    shared_context["source_urls"] = [f"https://disclosures.echo.internal/{existing_prop.property_id.lower()}"]
+                if not shared_context.get("raw_content"):
+                    topic_text = existing_prop.attributes.get("Topic", "Corporate Disclosure") if existing_prop.attributes else "Corporate Disclosure"
+                    signal_text = existing_prop.attributes.get("Signal_Type", "General") if existing_prop.attributes else "General"
+                    shared_context["raw_content"] = (
+                        f"<html><body><h1>{existing_prop.company or existing_prop.canonical_name}</h1>"
+                        f"<p>Sector: {existing_prop.sector}</p>"
+                        f"<p>Region: {existing_prop.region}</p>"
+                        f"<p>Topic: {topic_text}</p>"
+                        f"<p>Signal Type: {signal_text}</p>"
+                        f"</body></html>"
+                    )
+
         if "raw_content" in investigation.options:
             shared_context["raw_content"] = investigation.options["raw_content"]
+
 
         all_warnings: List[str] = []
         all_errors: List[str] = []

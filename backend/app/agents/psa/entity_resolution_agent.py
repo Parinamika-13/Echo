@@ -158,7 +158,8 @@ class PsaEntityResolutionAgent(BaseAgent):
             proj_name = ident.get("project_name") or ident.get("property_name") or "Unnamed Property Asset"
             locality = loc.get("locality") or loc.get("city") or "Unknown"
 
-            canonical_id = generate_entity_id(name=proj_name, locality=locality)
+            known_property_id = request.parameters.get("property_id") or request.context.get("property_id")
+            canonical_id = (known_property_id if len(clusters) == 1 else None) or generate_entity_id(name=proj_name, locality=locality)
             matched_candidate_ids = [c.get("candidate_id", "unknown") for c in cluster]
 
             # Merge / best-known field consolidation
