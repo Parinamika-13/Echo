@@ -74,10 +74,11 @@ class SsrAgent(BaseAgent):
         params = request.parameters
         ctx = request.context
 
-        props: List[Dict[str, Any]] = params.get("canonical_properties") or ctx.get("canonical_properties") or []
+        props: List[Dict[str, Any]] = list(params.get("canonical_properties") or ctx.get("canonical_properties") or [])
         single_prop = params.get("property") or ctx.get("property")
         if single_prop and isinstance(single_prop, dict):
-            props.append(single_prop)
+            if not any(p.get("property_id") == single_prop.get("property_id") for p in props):
+                props.append(single_prop)
 
         signals: List[Dict[str, Any]] = params.get("signals") or ctx.get("signals") or []
         analyses: List[Dict[str, Any]] = params.get("analyses") or ctx.get("analyses") or []
@@ -161,6 +162,7 @@ class SsrAgent(BaseAgent):
                         attributes=to_dict(prop),
                     )
                     db.add(new_prop_model)
+                    db.flush()
                     persisted_counts["properties"] += 1
 
                 # Audit record entry for property
@@ -186,43 +188,54 @@ class SsrAgent(BaseAgent):
                 audit_records.append(aud.model_dump())
                 persisted_counts["audit_records"] += 1
 
+            # Flush properties and audit records so foreign key dependencies are satisfied in PostgreSQL
+            db.flush()
+
             # 3. Persist Minted Signals
             for sig in signals:
                 sig_id = sig.get("signal_id")
-                if sig_id:
-                    existing_sig = db.query(SignalModel).filter_by(signal_id=sig_id).first()
-                    if not existing_sig:
-                        db_sig = SignalModel(
-                            signal_id=sig_id,
-                            signal_type=sig.get("signal_type"),
-                            entity_id=sig.get("entity_id"),
-                            severity=sig.get("severity", "MEDIUM"),
-                            importance=sig.get("importance", 5.0),
-                            description=sig.get("description", ""),
-                            source_reference=sig.get("source_reference"),
-                            evidence_reference=sig.get("evidence_reference"),
-                            confidence=sig.get("confidence"),
-                            status=sig.get("status", "ACTIVE"),
-                            metadata_payload=to_dict(sig.get("metadata", {})),
-                        )
-                        db.add(db_sig)
-                        persisted_counts["signals"] += 1
+                sig_ent_id = sig.get("entity_id") or request.parameters.get("property_id") or request.context.get("property_id")
+                if sig_id and sig_ent_id:
+                    # Ensure entity exists to satisfy foreign key
+                    prop_exists = db.query(PropertyModel.property_id).filter_by(property_id=sig_ent_id).first()
+                    if prop_exists:
+                        existing_sig = db.query(SignalModel).filter_by(signal_id=sig_id).first()
+                        if not existing_sig:
+                            db_sig = SignalModel(
+                                signal_id=sig_id,
+                                signal_type=sig.get("signal_type"),
+                                entity_id=sig_ent_id,
+                                severity=sig.get("severity", "MEDIUM"),
+                                importance=sig.get("importance", 5.0),
+                                description=sig.get("description", ""),
+                                source_reference=sig.get("source_reference"),
+                                evidence_reference=sig.get("evidence_reference"),
+                                confidence=sig.get("confidence"),
+                                status=sig.get("status", "ACTIVE"),
+                                metadata_payload=to_dict(sig.get("metadata", {})),
+                            )
+                            db.add(db_sig)
+                            persisted_counts["signals"] += 1
 
             # 4. Persist Real Estate Analysis
             for ana in analyses:
                 ana_id = ana.get("analysis_id")
-                if ana_id:
-                    existing_ana = db.query(AnalysisModel).filter_by(analysis_id=ana_id).first()
-                    if not existing_ana:
-                        db_ana = AnalysisModel(
-                            analysis_id=ana_id,
-                            entity_id=ana.get("entity_id", "ent_unknown"),
-                            status=ana.get("status", "COMPLETED"),
-                            confidence=ana.get("confidence"),
-                            metrics_payload=to_dict(ana),
-                        )
-                        db.add(db_ana)
-                        persisted_counts["analyses"] += 1
+                ana_ent_id = ana.get("entity_id") or request.parameters.get("property_id") or request.context.get("property_id")
+                if ana_id and ana_ent_id:
+                    # Ensure entity exists to satisfy foreign key
+                    prop_exists = db.query(PropertyModel.property_id).filter_by(property_id=ana_ent_id).first()
+                    if prop_exists:
+                        existing_ana = db.query(AnalysisModel).filter_by(analysis_id=ana_id).first()
+                        if not existing_ana:
+                            db_ana = AnalysisModel(
+                                analysis_id=ana_id,
+                                entity_id=ana_ent_id,
+                                status=ana.get("status", "COMPLETED"),
+                                confidence=ana.get("confidence"),
+                                metrics_payload=to_dict(ana),
+                            )
+                            db.add(db_ana)
+                            persisted_counts["analyses"] += 1
 
             db.commit()
 
