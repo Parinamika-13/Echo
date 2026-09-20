@@ -1,0 +1,11 @@
+# Robots.txt for ECHO Financial Intelligence Platform
+User-agent: *
+Allow: /
+Allow: /privacy
+Allow: /terms
+
+# Disallow private application terminals and API endpoints
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://echo-intelligence.dev/sitemap.xml
