@@ -1,0 +1,100 @@
+@import 'tailwindcss';
+@import './styles/tokens.css';
+
+@layer base {
+  html {
+    font-family: var(--echo-font-sans);
+    background: var(--echo-bg);
+    color: var(--echo-text);
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1200px 500px at 0% -10%, rgba(196, 163, 90, 0.05), transparent 55%),
+      radial-gradient(900px 420px at 100% 0%, rgba(61, 122, 122, 0.05), transparent 50%),
+      var(--echo-bg);
+    transition:
+      background-color var(--echo-duration-med) var(--echo-ease),
+      color var(--echo-duration-med) var(--echo-ease);
+  }
+
+  [data-theme='light'] body {
+    background:
+      radial-gradient(1000px 420px at 0% -8%, rgba(143, 111, 46, 0.07), transparent 50%),
+      var(--echo-bg);
+  }
+
+  * {
+    box-sizing: border-box;
+    border-color: var(--echo-hairline);
+  }
+
+  ::selection {
+    background: var(--echo-signal-dim);
+    color: var(--echo-text-strong);
+  }
+
+  h1,
+  h2,
+  .font-display {
+    font-family: var(--echo-font-display);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--echo-text-strong);
+  }
+
+  code,
+  kbd,
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--echo-signal);
+    outline-offset: 2px;
+  }
+
+  .echo-grid-bg {
+    background-image:
+      linear-gradient(var(--echo-hairline) 1px, transparent 1px),
+      linear-gradient(90deg, var(--echo-hairline) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-position: -1px -1px;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.35), transparent 80%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
