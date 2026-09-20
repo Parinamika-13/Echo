@@ -1,0 +1,151 @@
+/* ECHO design tokens — graphite ledger + brass signal. Dark is the primary identity. */
+
+:root {
+  color-scheme: dark;
+
+  --echo-bg: #0b0e12;
+  --echo-bg-elevated: #10151c;
+  --echo-surface: #12171e;
+  --echo-surface-2: #181e27;
+  --echo-surface-3: #1e2630;
+  --echo-hairline: #243040;
+  --echo-border: #2a3544;
+  --echo-rule: rgba(196, 163, 90, 0.18);
+
+  --echo-text: #c5cbd3;
+  --echo-text-muted: #7d8794;
+  --echo-text-faint: #5a6470;
+  --echo-text-strong: #f2efe6;
+
+  --echo-signal: #c4a35a;
+  --echo-signal-strong: #e0c078;
+  --echo-signal-dim: rgba(196, 163, 90, 0.14);
+  --echo-evidence: #3d7a7a;
+  --echo-evidence-strong: #5aa0a0;
+  --echo-evidence-dim: rgba(61, 122, 122, 0.16);
+  --echo-risk: #b4563a;
+  --echo-risk-strong: #d06a4c;
+  --echo-risk-dim: rgba(180, 86, 58, 0.16);
+  --echo-analysis: #6a7b8a;
+  --echo-analysis-strong: #8a9aa8;
+  --echo-health: #6b8f71;
+  --echo-health-dim: rgba(107, 143, 113, 0.16);
+  --echo-unknown: #8a8070;
+
+  --echo-overlay: rgba(8, 10, 14, 0.72);
+  --echo-shadow: 0 18px 40px rgba(0, 0, 0, 0.38);
+  --echo-shadow-sm: 0 8px 18px rgba(0, 0, 0, 0.28);
+  --echo-inset: inset 0 1px 0 rgba(242, 239, 230, 0.04);
+
+  --echo-radius-xs: 2px;
+  --echo-radius-sm: 4px;
+  --echo-radius: 6px;
+  --echo-radius-lg: 10px;
+
+  --echo-space-1: 0.25rem;
+  --echo-space-2: 0.5rem;
+  --echo-space-3: 0.75rem;
+  --echo-space-4: 1rem;
+  --echo-space-5: 1.25rem;
+  --echo-space-6: 1.5rem;
+  --echo-space-8: 2rem;
+  --echo-space-10: 2.5rem;
+  --echo-space-12: 3rem;
+
+  --echo-z-nav: 40;
+  --echo-z-header: 50;
+  --echo-z-dropdown: 60;
+  --echo-z-overlay: 70;
+  --echo-z-modal: 80;
+  --echo-z-toast: 90;
+
+  --echo-duration-fast: 120ms;
+  --echo-duration: 180ms;
+  --echo-duration-med: 280ms;
+  --echo-duration-slow: 420ms;
+  --echo-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --echo-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --echo-font-display: 'Newsreader', 'Iowan Old Style', 'Palatino Linotype', serif;
+  --echo-font-sans: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --echo-font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', monospace;
+
+  --echo-rail: 15.5rem;
+  --echo-rail-collapsed: 4.5rem;
+  --echo-header: 3.5rem;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+
+  --echo-bg: #f4f1ea;
+  --echo-bg-elevated: #faf7f1;
+  --echo-surface: #fbf8f2;
+  --echo-surface-2: #efe9de;
+  --echo-surface-3: #e5ddd0;
+  --echo-hairline: #d9d2c5;
+  --echo-border: #cfc6b6;
+  --echo-rule: rgba(138, 108, 40, 0.22);
+
+  --echo-text: #3a4149;
+  --echo-text-muted: #66707a;
+  --echo-text-faint: #8a8070;
+  --echo-text-strong: #12151a;
+
+  --echo-signal: #8f6f2e;
+  --echo-signal-strong: #6e541f;
+  --echo-signal-dim: rgba(143, 111, 46, 0.12);
+  --echo-evidence: #2f6666;
+  --echo-evidence-strong: #1f4f4f;
+  --echo-evidence-dim: rgba(47, 102, 102, 0.12);
+  --echo-risk: #9a4630;
+  --echo-risk-strong: #7a321f;
+  --echo-risk-dim: rgba(154, 70, 48, 0.12);
+  --echo-analysis: #4d5d6b;
+  --echo-analysis-strong: #33414c;
+  --echo-health: #3f6a48;
+  --echo-health-dim: rgba(63, 106, 72, 0.12);
+  --echo-unknown: #7a7060;
+
+  --echo-overlay: rgba(28, 26, 22, 0.46);
+  --echo-shadow: 0 16px 36px rgba(40, 32, 18, 0.12);
+  --echo-shadow-sm: 0 6px 14px rgba(40, 32, 18, 0.08);
+  --echo-inset: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --echo-duration-fast: 1ms;
+    --echo-duration: 1ms;
+    --echo-duration-med: 1ms;
+    --echo-duration-slow: 1ms;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--echo-bg);
+  --color-bg-elevated: var(--echo-bg-elevated);
+  --color-surface: var(--echo-surface);
+  --color-surface-2: var(--echo-surface-2);
+  --color-surface-3: var(--echo-surface-3);
+  --color-hairline: var(--echo-hairline);
+  --color-border: var(--echo-border);
+  --color-ink: var(--echo-text);
+  --color-muted: var(--echo-text-muted);
+  --color-faint: var(--echo-text-faint);
+  --color-strong: var(--echo-text-strong);
+  --color-signal: var(--echo-signal);
+  --color-signal-strong: var(--echo-signal-strong);
+  --color-evidence: var(--echo-evidence);
+  --color-risk: var(--echo-risk);
+  --color-analysis: var(--echo-analysis);
+  --color-health: var(--echo-health);
+  --color-unknown: var(--echo-unknown);
+  --font-display: var(--echo-font-display);
+  --font-sans: var(--echo-font-sans);
+  --font-mono: var(--echo-font-mono);
+  --radius-xs: var(--echo-radius-xs);
+  --radius-sm: var(--echo-radius-sm);
+  --radius-md: var(--echo-radius);
+  --radius-lg: var(--echo-radius-lg);
+}
